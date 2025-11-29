@@ -11,7 +11,7 @@ const meals = computed(() => store.state.mealsByLetter)
 
 
 watch(route, () => {
-    store.dispatch('searchMealsByletter', route.params.letter)
+    store.dispatch('searchMealsByLetter', route.params.letter)
 })
 </script>
 
