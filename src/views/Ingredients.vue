@@ -1,9 +1,9 @@
 <script setup>
 
 import { ref, onMounted, computed } from 'vue';
-import useApi from '@/composables/useApi';
+import useApI from '@/composables/useApi';
 
-const { api } = useApi();
+const { api } = useApI();
 
 const keywords = ref('');
 const ingredients = ref([]);
@@ -12,6 +12,16 @@ onMounted(() => {
     api.get('list.php?i=list').then(({ data }) => { ingredients.value = data.meals })
 });
 
+const searchIngredients = computed(() => {
+    if (!keywords.value) return ingredients.value
+
+    return ingredients.value.filter((i) =>
+        i.strIngredient.toLowerCase().includes(keywords.value.toLowerCase())
+    )
+})
+
+
+
 </script>
 
 <template>
@@ -19,5 +29,24 @@ onMounted(() => {
         <h1 class="text-4xl font-bold mb-4">Search Meals By ingredients</h1>
     </div>
 
-    {{ ingredients }}
+    <!-- {{ ingredients }} -->
+
+    <div class="p-10">
+        <input type="text" v-model="keywords" class="rounded border-2 border-gray-200 w-full bg-white mb-5"
+            placeholder="Enter ingredient name" />
+
+        <div class="grid grid-cols-4 gap-5">
+            <router-link v-for="ingredient in searchIngredients" :key="ingredient.idIngredient"
+                :to="{ name: 'MealsByIngredients', params: { ingredient: ingredient.strIngredient } }"
+                class="bg-white rounded p-3 mb-3 shadow block">
+
+                <img :src="`https://www.themealdb.com/images/ingredients/${ingredient.strIngredient}-Small.png`" />
+                <h3 class="text-2xl font-bold mb-2">{{ ingredient.strIngredient }}</h3>
+
+            </router-link>
+
+        </div>
+
+    </div>
+
 </template>
